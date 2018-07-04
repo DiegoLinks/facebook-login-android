@@ -1,8 +1,12 @@
 package com.fourtime.loginfacebook;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,6 +25,8 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -110,6 +116,23 @@ public class MainActivity extends AppCompatActivity {
         tv_date.setText("Data de nascimento: "+data_nascimento);
         tv_email.setText("Email: "+email);
         Glide.with(this).load(profili_picture).into(iv_foto);
+    }
+
+    //Pega a keyhash do projeto
+    private void printKeyHash() {
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo("com.fourtime.loginfacebook", PackageManager.GET_SIGNATURES);
+            for(android.content.pm.Signature signature: info.signatures){
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.i("KeyHash", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+                //+47knjQhYEbZNn3XKGPFoW98RKg=
+            }
+        } catch (PackageManager.NameNotFoundException e){
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
 }
